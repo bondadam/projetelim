@@ -4,6 +4,11 @@
 
 
 # Rechord
+Aide à l'apprentisage des accords de guitare.
+
+BOND Adam : IAM, adam.bond@etu.unice.fr
+MUNIER Rémy : IAM, remy.munier@etu.unice.fr
+
 
 
 ### Scénario
@@ -24,4 +29,4 @@ On enregistre des accords joués à la guitare, dans des conditions différentes
   - Raté : Sons parasites
   - Non reconnu.
   
-
+Librairie Java SVM : https://www.csie.ntu.edu.tw/~cjlin/libsvm/

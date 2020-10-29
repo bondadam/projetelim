@@ -38,7 +38,7 @@ Nous voyons deux modes d'utilisation possible:
 Optionnel: En stockant la progression des utilisateurs, nous pourrions recommander le prochain accord à apprendre pour un utilisateur donné, en se basant sur ce que d'autres qui avait des connaissances similaires ont appris par la suite. On pourrait aussi imaginer un aspect "jeu" en indiquant à l'utilisateur qu'il a apprit tel ou tel accord X% plus rapidement que la moyenne, ou avec plus de précision que la moyenne, etc.
 
 ### Application
-Premier mockup des écrans de l'application (disponible en interactif ici : https://www.fluidui.com/editor/live/lpreview/cF9GTjYydzdSNW9JRk1NTGVzWGlLaW5NbXdRQTBtOFNLSQ==)
+Premier mockup des écrans de l'application :
 ![ecrans_mockup](data/ecrans_mockup.jpg)
 ![ecrans_mockup](data/ecran1.jpg)
 ![ecrans_mockup](data/ecran2.jpg)

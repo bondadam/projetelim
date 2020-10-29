@@ -36,3 +36,11 @@ Nous voyons deux modes d'utilisation possible:
 2) l'utilisateur s'entraine à plusieurs accords à la suite, et la question est alors double: prédire quel accord est joué et si il est bien fait. Un retour de l'utilisateur quand a la précision de notre prédiction peut ici aussi être ajouté pour compléter notre dataset.
 
 Optionnel: En stockant la progression des utilisateurs, nous pourrions recommander le prochain accord à apprendre pour un utilisateur donné, en se basant sur ce que d'autres qui avait des connaissances similaires ont appris par la suite. On pourrait aussi imaginer un aspect "jeu" en indiquant à l'utilisateur qu'il a apprit tel ou tel accord X% plus rapidement que la moyenne, ou avec plus de précision que la moyenne, etc.
+
+### Application
+Premier mockup des écrans de l'application (disponible en interactif ici : https://www.fluidui.com/editor/live/lpreview/cF9GTjYydzdSNW9JRk1NTGVzWGlLaW5NbXdRQTBtOFNLSQ==)
+![ecrans_mockup](data/ecrans_mockup.jpg)
+![ecrans_mockup](data/ecran1.jpg)
+![ecrans_mockup](data/ecran2.jpg)
+![ecrans_mockup](data/ecran3.jpg)
+![ecrans_mockup](data/ecran4.jpg)

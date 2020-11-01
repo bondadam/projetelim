@@ -39,8 +39,8 @@ Optionnel: En stockant la progression des utilisateurs, nous pourrions recommand
 
 ### Application
 Premier mockup des écrans de l'application :
-![ecrans_mockup](data/ecrans_mockup.jpg)
-![ecrans_mockup](data/ecran1.jpg)
-![ecrans_mockup](data/ecran2.jpg)
-![ecrans_mockup](data/ecran3.jpg)
-![ecrans_mockup](data/ecran4.jpg)
+![ecrans_mockup](doc/ecrans_mockup.jpg)
+![ecrans_mockup](doc/ecran1.jpg)
+![ecrans_mockup](doc/ecran2.jpg)
+![ecrans_mockup](doc/ecran3.jpg)
+![ecrans_mockup](doc/ecran4.jpg)

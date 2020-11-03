@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string-array name="countdown_array">
+        <item>3</item>
+        <item>5</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+    </string-array>
+    <string name="countdown">5</string>
+    <string name="timer_text">Début de l\'enregistrement</string>
+    <string name="play_text">Commencer à jouer</string>
+</resources>

@@ -21,7 +21,7 @@ from waitress import serve
 sampling_rate = 22050 # 22Hz arbitrary sampling rate
 expected_length = 7 * sampling_rate
 
-ALLOWED_EXTENSIONS = {'wav'}
+ALLOWED_EXTENSIONS = {'wav', 'pcm'}
 UPLOAD_FOLDER = './'
 
 app = Flask(__name__)
@@ -45,13 +45,13 @@ def upload():
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
-            return redirect(request.url)
+            return "no files"
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
+            return "no selected file"
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -69,8 +69,10 @@ def upload():
             Ypredict = pickle_model.predict(signal)
             result = {'correct': Ypredict[0]}
             return jsonify(result)
-
-    abort(400)
+        else:
+            return "not allowed"
+    else:
+        return jsonify("request failed")
 
 if __name__ == "__main__":
    #app.run() ##Replaced with below code to run it using waitress 

@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Spinner spinner = findViewById(R.id.spinner);
         TextView tv1 = findViewById(R.id.countdownText);
         tv1.setText(spinner.getSelectedItem().toString());
-        tv1.setTextColor(Color.WHITE);
+        tv1.setTextColor(Color.BLUE);
         tv1.setTextSize(120);
     }
 
@@ -114,7 +117,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setOutputFile(fileName);
+        Context context = getApplicationContext();
+        File audiofile = null;
+        try {
+            audiofile = File.createTempFile("sound", ".3gp", context.getCacheDir());
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "external storage access error");
+            return;
+        }
+        recorder.setOutputFile(audiofile.getAbsolutePath());
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {

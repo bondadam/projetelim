@@ -14,6 +14,8 @@ import pickle
 import librosa
 from flask import Flask, flash, request, redirect, url_for, render_template, jsonify
 from werkzeug.utils import secure_filename
+from waitress import serve
+
 
 
 sampling_rate = 22050 # 22Hz arbitrary sampling rate
@@ -69,3 +71,7 @@ def upload():
             return jsonify(result)
 
     abort(400)
+
+if __name__ == "__main__":
+   #app.run() ##Replaced with below code to run it using waitress 
+   serve(app, host='0.0.0.0', port=8000)

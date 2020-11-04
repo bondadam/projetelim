@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void send(File file) throws IOException {
         OkHttpClient client = new OkHttpClient();
-        MediaType MEDIA_TYPE_WAV = MediaType.parse("audio/wav");
+        MediaType MEDIA_TYPE_WAV = MediaType.parse("audio/pcm");
 
         // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
         RequestBody requestBody = new MultipartBody.Builder()

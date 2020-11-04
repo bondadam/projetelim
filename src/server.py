@@ -18,7 +18,7 @@ from waitress import serve
 
 
 
-sampling_rate = 22050 # 22Hz arbitrary sampling rate
+sampling_rate = 44100 # 22KHz arbitrary sampling rate
 expected_length = 7 * sampling_rate
 
 ALLOWED_EXTENSIONS = {'wav', 'pcm'}
@@ -55,7 +55,11 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            signal, _ = librosa.load(filename, sampling_rate)
+            signal = 0
+            if file.filename == "pcm":
+                signal = numpy.memmap(filename, dtype='h', mode='r')
+            else:
+                signal, _ = librosa.load(filename, sampling_rate)
             if (len(signal) < expected_length):
                 signal = np.resize(signal, expected_length)
             signal = signal[:expected_length]

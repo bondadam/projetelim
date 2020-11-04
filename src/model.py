@@ -18,7 +18,7 @@ import pickle
 import librosa
 
 
-sampling_rate = 22050 # 22Hz arbitrary sampling rate
+sampling_rate = 44100 # 22Hz arbitrary sampling rate
 expected_length = 7 * sampling_rate
 
 

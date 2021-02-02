@@ -18,11 +18,11 @@ import pickle
 import librosa
 
 
-sampling_rate = 44100 # 22Hz arbitrary sampling rate
+sampling_rate = 22050 # 22Hz arbitrary sampling rate
 expected_length = 7 * sampling_rate
 
 
-rootDir = os.path.abspath(os.path.join(os.getcwd() , os.pardir)) + "\\data\\"
+rootDir = os.path.abspath(os.path.join(os.getcwd() , os.pardir)) + "\\projetelim\\data\\"
 goodDir = rootDir + "\\good\\"
 badDir = rootDir + "\\bad\\"
 file_names = [goodDir + x for x in os.listdir(goodDir)] + [badDir + x for x in os.listdir(badDir)]

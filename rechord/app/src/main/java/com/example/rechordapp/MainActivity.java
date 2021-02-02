@@ -36,6 +36,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -94,29 +96,71 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void send(File file) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        //OkHttpClient client = new OkHttpClient();
         MediaType MEDIA_TYPE_WAV = MediaType.parse("audio/pcm");
 
         // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", "recording.pcm",
-                        RequestBody.create(MEDIA_TYPE_WAV, file))
+                .addFormDataPart("file", "recording.wav",
+                        RequestBody.create(file, MEDIA_TYPE_WAV))
                 .build();
 
+        postRequest("http://abond.me:8080/upload", requestBody);
         /*Request request = new Request.Builder()
-                .url("http://10.0.2.2:5000/upload")
+                .url("http://abond.me:8080/upload")
                 .post(RequestBody.create(MEDIA_TYPE_WAV, file))
                 .build();*/
 
-        Request request = new Request.Builder().url("http://10.0.2.2:5000/upload").post(requestBody).build();
-
+        //Request request = new Request.Builder().url("http://abond.me:8080/upload").post(requestBody).build();
+/*
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
             System.out.println(response.body().string());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+    }
+
+    void postRequest(String postUrl, RequestBody postBody) {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(postUrl)
+                .post(postBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Cancel the post on failure.
+                call.cancel();
+
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(LOG_TAG, "Failed to Connect to Server");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Log.i(LOG_TAG, response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
         @Override
@@ -153,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         tv1.setTextColor(Color.RED);
                         tv1.setTextSize(60);
                         startRecording();
-                        new CountDownTimer(7000,1000) {
+                        new CountDownTimer(5000,1000) {
                             @Override
                             public void onTick(long millisUntilFinished) {
 
@@ -188,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void startRecording() {
         recorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT, SAMPLING_RATE_IN_HZ,
                 CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE);
-
         recorder.startRecording();
         recordingInProgress.set(true);
 
@@ -228,7 +271,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 throw new RuntimeException("Writing of recorded audio failed", e);
             }
             try {
-                send(file);
+                PCMToWAV converter = new PCMToWAV();
+                final File file_wav = new File(context.getCacheDir(), "recording.wav");
+                converter.PCMToWAV(file, file_wav, 2, 22050, 16);
+                send(file_wav);
             } catch (IOException e) {
                 e.printStackTrace();
             }

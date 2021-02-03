@@ -1,16 +1,20 @@
 package com.example.rechordapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -20,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -50,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static String fileName = "record.wav";
+    private ProgressBar progressBar;
+    private int progress;
 
     private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
@@ -82,6 +89,74 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private AudioRecord recorder = null;
 
     private Thread recordingThread = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+        Spinner spinner = findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.countdown_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
+        spinner.setOnItemSelectedListener(this);
+        TextView tv1 = findViewById(R.id.countdownText);
+        progressBar = findViewById(R.id.determinateBar);
+        tv1.setText(spinner.getSelectedItem().toString());
+        progress = 0;
+        //Drawable draw= res.getDrawable(R.drawable.custom_progressbar);
+// set the drawable as progress drawable
+        //progressBar.setProgressDrawable(draw);
+
+        FloatingActionButton record = findViewById(R.id.playButton);
+        record.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                new CountDownTimer(Integer.parseInt(spinner.getSelectedItem().toString())*1000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        tv1.setText(""+millisUntilFinished / 1000);
+                    }
+
+                    public void onFinish() {
+                        tv1.setText("Jouez");
+                        startRecording();
+                        progress = 0;
+                        progressBar.setVisibility(View.VISIBLE);
+                        int total_length = 5000;
+                        int interval = 100;
+                        new CountDownTimer(total_length, interval) {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                progress += (interval*100)/total_length;
+                                progressBar.setProgress(progress, true);
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                stopRecording();
+                            }
+                        }.start();
+                    }
+                }.start();
+            }
+        });
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,long id) {
+        Spinner spinner = findViewById(R.id.spinner);
+        TextView tv1 = findViewById(R.id.countdownText);
+        tv1.setText(spinner.getSelectedItem().toString());
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -153,7 +228,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void run() {
                         try {
-                            Log.i(LOG_TAG, response.body().string());
+                            String correct = response.body().string();
+                            Log.i(LOG_TAG, correct);
+                            sendMessage(correct);
+
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -163,66 +242,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-        @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-
-        Spinner spinner = findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.countdown_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-        TextView tv1 = findViewById(R.id.countdownText);
-        tv1.setText(spinner.getSelectedItem().toString());
-
-
-        FloatingActionButton record = findViewById(R.id.playButton);
-        record.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new CountDownTimer(Integer.parseInt(spinner.getSelectedItem().toString())*1000, 1000) {
-
-                    public void onTick(long millisUntilFinished) {
-                        tv1.setText(""+millisUntilFinished / 1000);
-                    }
-
-                    public void onFinish() {
-                        tv1.setText("Jouez");
-                        tv1.setTextColor(Color.RED);
-                        tv1.setTextSize(60);
-                        startRecording();
-                        new CountDownTimer(5000,1000) {
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                stopRecording();
-                            }
-                        }.start();
-                    }
-                }.start();
-            }
-        });
-
+    /** Called when the user taps the Send button */
+    public void sendMessage(String message) {
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("success", message);
+        startActivity(intent);
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,long id) {
-        Spinner spinner = findViewById(R.id.spinner);
-        TextView tv1 = findViewById(R.id.countdownText);
-        tv1.setText(spinner.getSelectedItem().toString());
-        tv1.setTextColor(Color.BLUE);
-        tv1.setTextSize(120);
-    }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {

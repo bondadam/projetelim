@@ -18,7 +18,7 @@ import pickle
 import librosa
 
 
-sampling_rate = 22050 # 22Hz arbitrary sampling rate
+sampling_rate = 44100 # 22Hz arbitrary sampling rate
 expected_length = 7 * sampling_rate
 
 
@@ -75,5 +75,8 @@ print(accuracy_score(y_test,predicted))
 pkl_filename = "pickle_model.pkl"
 with open(pkl_filename, 'wb') as file:
     pickle.dump(model, file)
+
+with open('pickle_scaler.pkl', 'wb') as file:
+    pickle.dump(sc, file)
 
 

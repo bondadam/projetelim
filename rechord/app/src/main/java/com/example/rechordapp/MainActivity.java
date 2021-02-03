@@ -55,8 +55,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static String fileName = "record.wav";
+    private Button history_button;
     private ProgressBar progressBar;
     private int progress;
+    private File wav_file;
+
 
     private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
@@ -111,9 +114,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         progressBar = findViewById(R.id.determinateBar);
         tv1.setText(spinner.getSelectedItem().toString());
         progress = 0;
-        //Drawable draw= res.getDrawable(R.drawable.custom_progressbar);
-// set the drawable as progress drawable
-        //progressBar.setProgressDrawable(draw);
+
+        history_button = findViewById(R.id.history_btn);
+
+        history_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startHistory();
+            }
+        });
 
         FloatingActionButton record = findViewById(R.id.playButton);
         record.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +164,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Spinner spinner = findViewById(R.id.spinner);
         TextView tv1 = findViewById(R.id.countdownText);
         tv1.setText(spinner.getSelectedItem().toString());
+    }
+
+    public void startHistory(){
+        Intent intent = new Intent(this, History.class);
+        startActivity(intent);
     }
 
     @Override
@@ -246,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void sendMessage(String message) {
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("success", message);
+        intent.putExtra("wav", wav_file);
         startActivity(intent);
     }
 
@@ -300,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 PCMToWAV converter = new PCMToWAV();
                 final File file_wav = new File(context.getCacheDir(), "recording.wav");
                 converter.PCMToWAV(file, file_wav, 2, 22050, 16);
+                wav_file = file_wav;
                 send(file_wav);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -12,4 +12,5 @@
     <string name="play_text">Commencer à jouer</string>
     <string name="enregistrement">Enregistrement</string>
     <string name="historique">Historique</string>
+    <string name="retour">retour</string>
 </resources>

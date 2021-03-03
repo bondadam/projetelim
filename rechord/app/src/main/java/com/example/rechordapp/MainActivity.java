@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ProgressBar progressBar;
     private int progress;
     private File wav_file;
+
+    private LinearLayout mainlayout;
+    private ProgressBar pbar;
 
 
     private boolean permissionToRecordAccepted = false;
@@ -101,6 +105,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
         Spinner spinner = findViewById(R.id.spinner);
+        this.mainlayout = findViewById(R.id.mainLayout);
+        this.pbar = findViewById(R.id.pBar);
+        mainlayout.setVisibility(View.VISIBLE);
+        pbar.setVisibility(View.GONE);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.countdown_array, android.R.layout.simple_spinner_item);
@@ -126,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         FloatingActionButton record = findViewById(R.id.playButton);
         record.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                mainlayout.setVisibility(View.VISIBLE);
+                pbar.setVisibility(View.GONE);
                 new CountDownTimer(Integer.parseInt(spinner.getSelectedItem().toString())*1000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
@@ -149,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                             @Override
                             public void onFinish() {
+                                pbar.setVisibility(View.VISIBLE);
+                                mainlayout.setVisibility(View.GONE);
                                 stopRecording();
                             }
                         }.start();
